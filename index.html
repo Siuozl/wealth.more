@@ -38,11 +38,857 @@
     overflow-x: hidden;
   }
   .app { max-width: 780px; margin: 0 auto; padding: 0 16px 80px; }
+
+  /* Header */
   .header {
-     display: flex;
-     align-items: center;
-     gap: 10px;
- }
-  .header h1 {
-  font-size:45px;
-      <!--changed_Classified section-color goes angularions tailoring ----successful write toclass!!>`
+    display: flex; align-items: center; gap: 10px;
+    padding: 28px 0 24px;
+  }
+  .logo-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  .header h1 span { color: var(--accent); }
+
+  /* Action buttons */
+  .main-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .btn-main {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 15px 18px;
+    cursor: pointer; color: var(--text); font-size: 15px; font-weight: 500;
+    transition: background 0.15s, border-color 0.15s;
+    width: 100%; text-align: left;
+  }
+  .btn-main:hover { background: var(--surface2); border-color: var(--accent); }
+  .btn-main .icon-wrap {
+    width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .btn-main.expense .icon-wrap { background: var(--red-bg); }
+  .btn-main.save .icon-wrap { background: var(--green-bg); }
+  .btn-main .label { flex: 1; }
+  .btn-main .sub { font-size: 12px; color: var(--text2); font-weight: 400; }
+  .btn-main .chevron { color: var(--text3); }
+
+  /* Search */
+  .search-wrap { position: relative; margin-bottom: 14px; }
+  .search-wrap svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+  #searchInput {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px 10px 40px;
+    color: var(--text); font-size: 14px; outline: none;
+  }
+  #searchInput:focus { border-color: var(--accent); }
+  #searchInput::placeholder { color: var(--text3); }
+
+  /* Lists */
+  .lists-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .list-col { display: flex; flex-direction: column; gap: 8px; }
+  .list-col-header { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+  .list-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 11px 13px;
+    cursor: pointer; transition: background 0.12s, border-color 0.12s;
+  }
+  .list-item:hover { background: var(--surface2); border-color: var(--border2); }
+  .list-item .item-name { font-size: 14px; font-weight: 500; word-break: break-word; }
+  .list-item .item-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .list-item .item-amount { font-size: 14px; font-weight: 600; }
+  .list-item.expense-item .item-amount { color: var(--red); }
+  .list-item.saving-item .item-amount { color: var(--green); }
+  .empty-state { color: var(--text3); font-size: 13px; padding: 20px 0; text-align: center; }
+
+  /* Overlay / Modal */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7); z-index: 100;
+    align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 20px 20px 0 0; width: 100%; max-width: 780px;
+    max-height: 90vh; overflow-y: auto;
+    padding: 24px 20px 40px;
+    animation: slideUp 0.22s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-handle { width: 40px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 50%;
+    width: 32px; height: 32px; cursor: pointer; color: var(--text2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  /* Chip buttons (item/price selectors) */
+  .chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chip {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 100px; padding: 7px 14px; font-size: 14px;
+    cursor: pointer; color: var(--text); transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .chip:hover, .chip.selected { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip .count { font-size: 11px; opacity: 0.7; margin-left: 5px; }
+
+  /* Inputs */
+  .text-input {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 11px 14px; font-size: 15px;
+    color: var(--text); outline: none; width: 100%;
+  }
+  .text-input:focus { border-color: var(--accent); }
+  .text-input::placeholder { color: var(--text3); }
+  .input-row { display: flex; gap: 10px; align-items: center; }
+  .input-row .text-input { flex: 1; }
+
+  /* CTA buttons */
+  .btn {
+    background: var(--accent); color: #fff; border: none;
+    border-radius: var(--radius-sm); padding: 12px 22px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    transition: background 0.12s;
+  }
+  .btn:hover { background: var(--accent2); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-outline {
+    background: transparent; color: var(--text2); border: 1px solid var(--border2);
+    border-radius: var(--radius-sm); padding: 10px 18px;
+    font-size: 14px; cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+  .section-label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* Recommendation cards */
+  .reco-card {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+  }
+  .reco-card .reco-saving { font-size: 22px; font-weight: 700; color: var(--green); }
+  .reco-card .reco-label { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+  .reco-card .reco-items { display: flex; flex-direction: column; gap: 7px; }
+  .reco-item-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .reco-item-row .ri-name { font-size: 14px; font-weight: 500; word-break: break-word; flex: 1; }
+  .reco-item-row .ri-detail { font-size: 13px; color: var(--text2); flex-shrink: 0; }
+  .reco-note { font-size: 12px; color: var(--text3); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .reco-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--accent-glow); color: var(--accent);
+    border-radius: 100px; padding: 3px 10px; font-size: 12px; font-weight: 500;
+  }
+
+  /* Step progress */
+  .step-dots { display: flex; gap: 6px; margin-bottom: 18px; }
+  .step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); }
+  .step-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+
+  .saving-goal-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 13px 15px; margin-bottom: 10px;
+  }
+  .saving-goal-card .sg-name { font-size: 14px; font-weight: 600; }
+  .saving-goal-card .sg-amount { font-size: 20px; font-weight: 700; color: var(--green); }
+  .saving-goal-card .sg-sub { font-size: 12px; color: var(--text2); }
+
+  @media (max-width: 520px) {
+    .lists-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <h1>Wealth<span>.More</span></h1>
+  </div>
+
+  <!-- Main action buttons -->
+  <div class="main-actions">
+    <button class="btn-main expense" onclick="openExpenseFlow()">
+      <div class="icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </div>
+      <div class="label">
+        <div>New expense</div>
+        <div class="sub">Log an unnecessary spending</div>
+      </div>
+      <div class="chevron">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+    <button class="btn-main save" onclick="openSaveFlow()">
+      <div class="icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        </svg>
+      </div>
+      <div class="label">
+        <div>Save money</div>
+        <div class="sub">Set a savings goal &amp; get smart tips</div>
+      </div>
+      <div class="chevron">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" class="text-input" placeholder="Search expenses &amp; savings…" oninput="renderHome()">
+  </div>
+
+  <!-- Two-column lists -->
+  <div class="lists-row">
+    <div class="list-col">
+      <div class="list-col-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Expenses
+      </div>
+      <div id="expenseList"></div>
+    </div>
+    <div class="list-col">
+      <div class="list-col-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        Savings
+      </div>
+      <div id="savingList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EXPENSE FLOW OVERLAY ===== -->
+<div class="overlay" id="expenseOverlay">
+  <div class="modal" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <!-- Step 1: item name -->
+    <div id="expStep1">
+      <div class="step-dots"><div class="step-dot active"></div><div class="step-dot"></div></div>
+      <div class="modal-title">What did you spend on?</div>
+      <div class="modal-sub">Pick a previous item or enter a new one</div>
+      <div class="section-label">Previous items</div>
+      <div class="chips-wrap" id="expItemChips"></div>
+      <div class="input-row">
+        <input id="expItemInput" class="text-input" placeholder="New item…" oninput="onExpItemInput()">
+        <button class="btn" onclick="goExpStep2()">Continue
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-left:6px;vertical-align:-2px"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: price -->
+    <div id="expStep2" style="display:none;">
+      <div class="step-dots"><div class="step-dot"></div><div class="step-dot active"></div></div>
+      <div class="modal-title" id="expStep2Title">How much did it cost?</div>
+      <div class="modal-sub">Pick a previous price or enter a custom one</div>
+      <div class="section-label">Previous prices</div>
+      <div class="chips-wrap" id="expPriceChips"></div>
+      <div class="input-row">
+        <input id="expPriceInput" class="text-input" placeholder="4.56" type="number" step="0.01" min="0" oninput="onExpPriceInput()">
+        <button class="btn" onclick="submitExpense()">Submit
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-left:6px;vertical-align:-2px"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </div>
+      <button class="btn-outline" style="margin-top:12px;" onclick="backExpStep1()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SAVE FLOW OVERLAY ===== -->
+<div class="overlay" id="saveOverlay">
+  <div class="modal" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <!-- Step 1 -->
+    <div id="saveStep1">
+      <div class="step-dots"><div class="step-dot active"></div><div class="step-dot"></div></div>
+      <div class="modal-title">What are you saving for?</div>
+      <div class="modal-sub">Pick a previous goal or enter a new one</div>
+      <div class="section-label">Previous goals</div>
+      <div class="chips-wrap" id="saveItemChips"></div>
+      <div class="input-row">
+        <input id="saveItemInput" class="text-input" placeholder="New item…" oninput="onSaveItemInput()">
+        <button class="btn" onclick="goSaveStep2()">Continue
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-left:6px;vertical-align:-2px"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="saveStep2" style="display:none;">
+      <div class="step-dots"><div class="step-dot"></div><div class="step-dot active"></div></div>
+      <div class="modal-title" id="saveStep2Title">How much does it cost?</div>
+      <div class="modal-sub">Pick a previous price or enter a custom one</div>
+      <div class="section-label">Previous prices for this goal</div>
+      <div class="chips-wrap" id="savePriceChips"></div>
+      <div class="input-row">
+        <input id="savePriceInput" class="text-input" placeholder="4.56" type="number" step="0.01" min="0" oninput="onSavePriceInput()">
+        <button class="btn" onclick="submitSaving()">Get recommendations
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="margin-left:6px;vertical-align:-2px"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <button class="btn-outline" style="margin-top:12px;" onclick="backSaveStep1()">← Back</button>
+    </div>
+
+    <!-- Step 3: recommendations -->
+    <div id="saveStep3" style="display:none;">
+      <div class="modal-title" id="recoTitle">Recommendations</div>
+      <div class="modal-sub" id="recoSub"></div>
+      <div id="recoList"></div>
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        <button class="btn-outline" style="display:flex;align-items:center;gap:6px;" onclick="addMoreRecos()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          More options
+        </button>
+        <button class="btn" onclick="closeAll()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SAVING DETAIL OVERLAY ===== -->
+<div class="overlay" id="savingDetailOverlay">
+  <div class="modal" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeAll()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div id="savingDetailContent"></div>
+  </div>
+</div>
+
+<script>
+// ======= DATA =======
+function load(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
+function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+// expenses: [{name, price, ts}]
+// savings: [{name, goal, ts, recos:[]}]
+let expenses = load('wm_expenses', []);
+let savings = load('wm_savings', []);
+
+function saveAll() {
+  save('wm_expenses', expenses);
+  save('wm_savings', savings);
+}
+
+// ======= HOME RENDER =======
+function renderHome() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  // expenses list: group by name, show most recent per unique occurrence
+  const expEl = document.getElementById('expenseList');
+  let expFiltered = expenses.filter(e => !q || e.name.toLowerCase().includes(q));
+  // deduplicate for display (show each entry)
+  const expDisplay = [...expFiltered].sort((a,b) => b.ts - a.ts);
+  if (expDisplay.length === 0) {
+    expEl.innerHTML = '<div class="empty-state">No expenses yet</div>';
+  } else {
+    expEl.innerHTML = expDisplay.slice(0,20).map(e => `
+      <div class="list-item expense-item">
+        <div class="item-name">${esc(e.name)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="item-meta">${relTime(e.ts)}</div>
+          <div class="item-amount">-$${fmt(e.price)}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // savings list
+  const savEl = document.getElementById('savingList');
+  let savFiltered = savings.filter(s => !q || s.name.toLowerCase().includes(q));
+  const savDisplay = [...savFiltered].sort((a,b) => b.ts - a.ts);
+  if (savDisplay.length === 0) {
+    savEl.innerHTML = '<div class="empty-state">No savings goals yet</div>';
+  } else {
+    savEl.innerHTML = savDisplay.map((s, i) => `
+      <div class="list-item saving-item" onclick="openSavingDetail(${savings.indexOf(s)})">
+        <div class="item-name">${esc(s.name)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="item-meta">${relTime(s.ts)} · tap for tips</div>
+          <div class="item-amount">$${fmt(s.goal)}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(n) { return Number(n).toFixed(2); }
+function relTime(ts) {
+  const d = Math.floor((Date.now() - ts) / 1000);
+  if (d < 60) return 'just now';
+  if (d < 3600) return Math.floor(d/60) + 'm ago';
+  if (d < 86400) return Math.floor(d/3600) + 'h ago';
+  return Math.floor(d/86400) + 'd ago';
+}
+
+// ======= EXPENSE FLOW =======
+let expSelectedItem = '';
+let expSelectedPrice = '';
+
+function openExpenseFlow() {
+  expSelectedItem = ''; expSelectedPrice = '';
+  document.getElementById('expItemInput').value = '';
+  document.getElementById('expPriceInput').value = '';
+  document.getElementById('expStep1').style.display = '';
+  document.getElementById('expStep2').style.display = 'none';
+  renderExpItemChips();
+  document.getElementById('expenseOverlay').classList.add('open');
+}
+
+function renderExpItemChips() {
+  // Aggregate items with weighted frequency (recent = more weight)
+  const now = Date.now();
+  const map = {};
+  expenses.forEach(e => {
+    const age = (now - e.ts) / (1000 * 60 * 60 * 24); // days
+    const weight = Math.exp(-age / 30); // decay over 30 days
+    if (!map[e.name]) map[e.name] = { count: 0, weight: 0 };
+    map[e.name].count++;
+    map[e.name].weight += weight;
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1].weight - a[1].weight);
+  const el = document.getElementById('expItemChips');
+  el.innerHTML = sorted.map(([name, d]) => `
+    <div class="chip ${expSelectedItem===name?'selected':''}" onclick="selectExpItem('${esc(name)}')">${esc(name)}<span class="count">${d.count}×</span></div>
+  `).join('') || '<span style="color:var(--text3);font-size:13px;">No previous items</span>';
+}
+
+function selectExpItem(name) {
+  expSelectedItem = name;
+  document.getElementById('expItemInput').value = '';
+  renderExpItemChips();
+}
+
+function onExpItemInput() {
+  expSelectedItem = '';
+  renderExpItemChips();
+}
+
+function goExpStep2() {
+  const val = document.getElementById('expItemInput').value.trim() || expSelectedItem;
+  if (!val) return alert('Please enter or select an item.');
+  expSelectedItem = val;
+  expSelectedPrice = '';
+  document.getElementById('expStep2Title').textContent = `How much did "${val}" cost?`;
+  document.getElementById('expPriceInput').value = '';
+  document.getElementById('expStep1').style.display = 'none';
+  document.getElementById('expStep2').style.display = '';
+  renderExpPriceChips();
+}
+
+function renderExpPriceChips() {
+  const now = Date.now();
+  const prices = expenses
+    .filter(e => e.name === expSelectedItem)
+    .map(e => ({ price: e.price, ts: e.ts }));
+
+  const map = {};
+  prices.forEach(e => {
+    const age = (now - e.ts) / (1000 * 60 * 60 * 24);
+    const weight = Math.exp(-age / 30);
+    const k = String(e.price);
+    if (!map[k]) map[k] = { count: 0, weight: 0 };
+    map[k].count++;
+    map[k].weight += weight;
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1].weight - a[1].weight);
+  const el = document.getElementById('expPriceChips');
+  el.innerHTML = sorted.map(([p, d]) => `
+    <div class="chip ${expSelectedPrice===p?'selected':''}" onclick="selectExpPrice('${p}')">\$${fmt(p)}<span class="count">${d.count}×</span></div>
+  `).join('') || '<span style="color:var(--text3);font-size:13px;">No previous prices</span>';
+}
+
+function selectExpPrice(p) {
+  expSelectedPrice = p;
+  document.getElementById('expPriceInput').value = '';
+  renderExpPriceChips();
+}
+
+function onExpPriceInput() {
+  expSelectedPrice = '';
+  renderExpPriceChips();
+}
+
+function backExpStep1() {
+  document.getElementById('expStep1').style.display = '';
+  document.getElementById('expStep2').style.display = 'none';
+}
+
+function submitExpense() {
+  const price = parseFloat(document.getElementById('expPriceInput').value) || parseFloat(expSelectedPrice);
+  if (!price || price <= 0) return alert('Please enter a valid price.');
+  expenses.push({ name: expSelectedItem, price, ts: Date.now() });
+  saveAll();
+  closeAll();
+  renderHome();
+}
+
+// ======= SAVE FLOW =======
+let saveSelectedItem = '';
+let saveSelectedPrice = '';
+
+function openSaveFlow() {
+  saveSelectedItem = ''; saveSelectedPrice = '';
+  document.getElementById('saveItemInput').value = '';
+  document.getElementById('savePriceInput').value = '';
+  document.getElementById('saveStep1').style.display = '';
+  document.getElementById('saveStep2').style.display = 'none';
+  document.getElementById('saveStep3').style.display = 'none';
+  renderSaveItemChips();
+  document.getElementById('saveOverlay').classList.add('open');
+}
+
+function renderSaveItemChips() {
+  const map = {};
+  savings.forEach(s => {
+    if (!map[s.name]) map[s.name] = 0;
+    map[s.name]++;
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1]-a[1]);
+  const el = document.getElementById('saveItemChips');
+  el.innerHTML = sorted.map(([name, c]) => `
+    <div class="chip ${saveSelectedItem===name?'selected':''}" onclick="selectSaveItem('${esc(name)}')">${esc(name)}<span class="count">${c}×</span></div>
+  `).join('') || '<span style="color:var(--text3);font-size:13px;">No previous goals</span>';
+}
+
+function selectSaveItem(name) {
+  saveSelectedItem = name;
+  document.getElementById('saveItemInput').value = '';
+  renderSaveItemChips();
+}
+
+function onSaveItemInput() {
+  saveSelectedItem = '';
+  renderSaveItemChips();
+}
+
+function goSaveStep2() {
+  const val = document.getElementById('saveItemInput').value.trim() || saveSelectedItem;
+  if (!val) return alert('Please enter or select an item.');
+  saveSelectedItem = val;
+  saveSelectedPrice = '';
+  document.getElementById('saveStep2Title').textContent = `How much does "${val}" cost?`;
+  document.getElementById('savePriceInput').value = '';
+  document.getElementById('saveStep1').style.display = 'none';
+  document.getElementById('saveStep2').style.display = '';
+  renderSavePriceChips();
+}
+
+function renderSavePriceChips() {
+  const map = {};
+  savings.filter(s => s.name === saveSelectedItem).forEach(s => {
+    const k = String(s.goal);
+    if (!map[k]) map[k] = 0;
+    map[k]++;
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1]-a[1]);
+  const el = document.getElementById('savePriceChips');
+  el.innerHTML = sorted.map(([p, c]) => `
+    <div class="chip ${saveSelectedPrice===p?'selected':''}" onclick="selectSavePrice('${p}')">\$${fmt(p)}<span class="count">${c}×</span></div>
+  `).join('') || '<span style="color:var(--text3);font-size:13px;">No previous prices</span>';
+}
+
+function selectSavePrice(p) {
+  saveSelectedPrice = p;
+  document.getElementById('savePriceInput').value = '';
+  renderSavePriceChips();
+}
+
+function onSavePriceInput() {
+  saveSelectedPrice = '';
+  renderSavePriceChips();
+}
+
+function backSaveStep1() {
+  document.getElementById('saveStep1').style.display = '';
+  document.getElementById('saveStep2').style.display = 'none';
+}
+
+let currentSavingIndex = -1;
+let currentRecoPage = 0;
+let allRecos = [];
+
+function submitSaving() {
+  const goal = parseFloat(document.getElementById('savePriceInput').value) || parseFloat(saveSelectedPrice);
+  if (!goal || goal <= 0) return alert('Please enter a valid amount.');
+
+  const saving = { name: saveSelectedItem, goal, ts: Date.now(), recos: [] };
+  savings.push(saving);
+  currentSavingIndex = savings.length - 1;
+  saveAll();
+
+  document.getElementById('saveStep2').style.display = 'none';
+  document.getElementById('saveStep3').style.display = '';
+  document.getElementById('recoTitle').textContent = `How to save $${fmt(goal)} for ${saveSelectedItem}`;
+  document.getElementById('recoSub').textContent = 'Based on your recent spending habits:';
+
+  currentRecoPage = 0;
+  allRecos = generateRecos(goal);
+  savings[currentSavingIndex].recos = allRecos;
+  saveAll();
+  renderRecos();
+  renderHome();
+}
+
+function addMoreRecos() {
+  currentRecoPage++;
+  const extra = generateRecos(savings[currentSavingIndex].goal);
+  allRecos = allRecos.concat(extra);
+  savings[currentSavingIndex].recos = allRecos;
+  saveAll();
+  renderRecos();
+}
+
+// ======= RECOMMENDATION ENGINE =======
+function generateRecos(goal) {
+  // Build weighted item stats (recency-weighted)
+  const now = Date.now();
+  const itemStats = {};
+  expenses.forEach(e => {
+    const ageDays = (now - e.ts) / (1000 * 60 * 60 * 24);
+    const weight = Math.exp(-ageDays / 21); // 3-week decay
+    if (!itemStats[e.name]) itemStats[e.name] = { prices: [], totalWeight: 0, weightedTotal: 0, count: 0, lastTs: 0 };
+    const s = itemStats[e.name];
+    s.prices.push(e.price);
+    s.totalWeight += weight;
+    s.weightedTotal += e.price * weight;
+    s.count++;
+    s.lastTs = Math.max(s.lastTs || 0, e.ts);
+  });
+
+  // Compute weighted avg price and weighted frequency per week
+  const items = Object.entries(itemStats).map(([name, s]) => {
+    const avgPrice = s.weightedTotal / s.totalWeight;
+    // estimate how many per week (weighted)
+    const weekWeight = s.totalWeight / (21 / 7); // normalize to weekly
+    return { name, avgPrice, weekWeight, count: s.count, lastTs: s.lastTs };
+  }).filter(i => i.count >= 1);
+
+  // Sort by weighted weekly cost descending
+  items.sort((a, b) => (b.avgPrice * b.weekWeight) - (a.avgPrice * a.weekWeight));
+
+  const recos = [];
+  const used = new Set();
+
+  // Strategy 1: Single biggest offender
+  for (const item of items) {
+    if (used.has(item.name)) continue;
+    const timesNeeded = Math.ceil(goal / item.avgPrice);
+    if (timesNeeded <= 100) {
+      recos.push({
+        label: 'Cut one habit',
+        items: [{ name: item.name, times: timesNeeded, saving: timesNeeded * item.avgPrice, avgPrice: item.avgPrice }],
+        total: timesNeeded * item.avgPrice,
+        note: `At your recent rate, you buy ${item.name} ~${(item.weekWeight).toFixed(1)}×/week. Skipping ${timesNeeded} times saves you $${fmt(timesNeeded * item.avgPrice)}.`
+      });
+      used.add(item.name);
+      break;
+    }
+  }
+
+  // Strategy 2: Combination of top 2-3 items
+  if (items.length >= 2) {
+    let remaining = goal;
+    const combo = [];
+    const tmpUsed = new Set();
+    for (const item of items) {
+      if (tmpUsed.has(item.name) || used.has(item.name + '_combo')) continue;
+      const times = Math.max(1, Math.round(remaining / item.avgPrice));
+      const save = Math.min(times * item.avgPrice, remaining * 1.1);
+      combo.push({ name: item.name, times: Math.ceil(save / item.avgPrice), saving: save, avgPrice: item.avgPrice });
+      remaining -= save;
+      tmpUsed.add(item.name);
+      if (remaining <= 0) break;
+      if (combo.length >= 3) break;
+    }
+    if (combo.length >= 2 && combo.reduce((a,c)=>a+c.saving,0) >= goal * 0.85) {
+      const total = combo.reduce((a,c)=>a+c.saving,0);
+      recos.push({
+        label: 'Balanced mix',
+        items: combo,
+        total,
+        note: `A mix of small cuts across ${combo.length} categories can cover your goal without any drastic changes.`
+      });
+    }
+  }
+
+  // Strategy 3: Fewest number of skips total
+  const byPrice = [...items].sort((a,b) => b.avgPrice - a.avgPrice);
+  if (byPrice.length > 0) {
+    let remaining = goal;
+    const combo = [];
+    for (const item of byPrice) {
+      if (remaining <= 0) break;
+      const times = Math.ceil(Math.min(remaining, goal) / item.avgPrice);
+      const saving = times * item.avgPrice;
+      combo.push({ name: item.name, times, saving, avgPrice: item.avgPrice });
+      remaining -= saving;
+      if (combo.length >= 3) break;
+    }
+    if (combo.length > 0) {
+      const total = combo.reduce((a,c)=>a+c.saving,0);
+      const totalTimes = combo.reduce((a,c)=>a+c.times,0);
+      recos.push({
+        label: 'Fewest skips',
+        items: combo,
+        total,
+        note: `Only ${totalTimes} purchase${totalTimes>1?'s':''} to skip in total by focusing on your priciest items.`
+      });
+    }
+  }
+
+  // If no expenses, show placeholder
+  if (recos.length === 0) {
+    recos.push({
+      label: 'Track more expenses',
+      items: [],
+      total: 0,
+      note: `Add some unnecessary expenses first and we'll calculate personalized recommendations.`
+    });
+  }
+
+  return recos;
+}
+
+function renderRecos() {
+  const el = document.getElementById('recoList');
+  const show = allRecos.slice(currentRecoPage * 3, (currentRecoPage + 1) * 3);
+  el.innerHTML = show.map(r => `
+    <div class="reco-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span class="tag">${esc(r.label)}</span>
+        <span class="reco-saving">$${fmt(r.total)}</span>
+      </div>
+      <div class="reco-label">total savings</div>
+      <div class="reco-items">
+        ${r.items.map(i => `
+          <div class="reco-item-row">
+            <div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <span class="ri-name">${esc(i.name)}</span>
+            </div>
+            <span class="ri-detail">skip ${i.times}× @ $${fmt(i.avgPrice)} = $${fmt(i.saving)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="reco-note">${esc(r.note)}</div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);font-size:13px;padding:12px 0;">Log more expenses to get recommendations.</div>';
+}
+
+// ======= SAVING DETAIL OVERLAY =======
+function openSavingDetail(idx) {
+  const s = savings[idx];
+  if (!s) return;
+  currentSavingIndex = idx;
+  currentRecoPage = 0;
+
+  // regenerate fresh recos
+  const freshRecos = generateRecos(s.goal);
+  savings[idx].recos = (savings[idx].recos || []).concat(freshRecos);
+  allRecos = savings[idx].recos;
+  saveAll();
+
+  const el = document.getElementById('savingDetailContent');
+  el.innerHTML = `
+    <div class="saving-goal-card" style="margin-bottom:18px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="sg-name">${esc(s.name)}</div>
+          <div class="sg-sub">saved ${relTime(s.ts)}</div>
+        </div>
+        <div class="sg-amount">$${fmt(s.goal)}</div>
+      </div>
+    </div>
+    <div class="modal-title" style="margin-bottom:4px;">Recommendations</div>
+    <div class="modal-sub" style="margin-bottom:16px;">How to reach your $${fmt(s.goal)} goal:</div>
+    <div id="detailRecoList"></div>
+    <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+      <button class="btn-outline" style="display:flex;align-items:center;gap:6px;" onclick="addMoreDetailRecos(${idx})">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        More options
+      </button>
+      <button class="btn" onclick="closeAll()">Done</button>
+    </div>
+  `;
+  renderDetailRecos();
+  document.getElementById('savingDetailOverlay').classList.add('open');
+}
+
+function renderDetailRecos() {
+  const show = allRecos.slice(currentRecoPage * 3, (currentRecoPage + 1) * 3);
+  const el = document.getElementById('detailRecoList');
+  if (!el) return;
+  el.innerHTML = show.map(r => `
+    <div class="reco-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span class="tag">${esc(r.label)}</span>
+        <span class="reco-saving">$${fmt(r.total)}</span>
+      </div>
+      <div class="reco-label">total savings</div>
+      <div class="reco-items">
+        ${r.items.map(i => `
+          <div class="reco-item-row">
+            <div>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <span class="ri-name">${esc(i.name)}</span>
+            </div>
+            <span class="ri-detail">skip ${i.times}× @ $${fmt(i.avgPrice)} = $${fmt(i.saving)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="reco-note">${esc(r.note)}</div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);font-size:13px;padding:12px 0;">Log more expenses to get recommendations.</div>';
+}
+
+function addMoreDetailRecos(idx) {
+  currentRecoPage++;
+  const extra = generateRecos(savings[idx].goal);
+  allRecos = allRecos.concat(extra);
+  savings[idx].recos = allRecos;
+  saveAll();
+  renderDetailRecos();
+}
+
+// ======= CLOSE ALL =======
+function closeAll() {
+  document.getElementById('expenseOverlay').classList.remove('open');
+  document.getElementById('saveOverlay').classList.remove('open');
+  document.getElementById('savingDetailOverlay').classList.remove('open');
+  renderHome();
+}
+
+// Close on overlay background click
+['expenseOverlay','saveOverlay','savingDetailOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target === this) closeAll();
+  });
+});
+
+// Init
+renderHome();
+</script>
+</body>
+</html>
